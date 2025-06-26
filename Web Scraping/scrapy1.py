@@ -20,8 +20,13 @@ file_path = r'C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scri
 
 try:
     with open(file_path, 'ab') as file:  # Open in append binary mode
-        file.write(b'HII')  # Write bytes using the 'b' prefix
+        file.write(b'HII\n')  # Write bytes using the 'b' prefix
     print(f"Successfully appended 'HII' to {file_path}")
+   
+    with open(file_path,'rb') as f:
+        data=f.read()
+        print(data.decode('utf-8'))
+
 except IOError as e:
     print(f"Error writing to file: {e}")
 
