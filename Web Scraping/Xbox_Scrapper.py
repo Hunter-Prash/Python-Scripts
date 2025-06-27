@@ -63,9 +63,11 @@ smtpObj.starttls()
 print(smtpObj.login('rajaji.prashant@gmail.com', 'plfw vppx ahtc kwjq'))
 print('==Link established with SMTP server==')
 
+dt=datetime.datetime.now()#creating a datetime object
+
 from_addr = 'rajaji.prashant@gmail.com'
 to_addr = 'pctechtalks@gmail.com'
-subject = f'Xbox game deals as of {datetime.datetime.now()}'
+subject = f'Xbox game deals as of {dt.day}/{dt.month}/{dt.year} :: {dt.hour}:{dt.minute}:{dt.second}'
 
 with open('C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scripts\\Web Scraping\\gameDeals.txt','r') as f:
     data=f.read()
