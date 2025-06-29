@@ -5,6 +5,8 @@ import time
 import random
 from email.mime.text import MIMEText
 import smtplib 
+import os
+from dotenv import load_dotenv
 
 # Configure Chrome options
 options = uc.ChromeOptions()
@@ -27,6 +29,12 @@ options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 # Optional: Uncomment for visible browser automation
 # options.add_argument("--headless=new")  # Avoid headless if scraping protected sites
 
+load_dotenv(dotenv_path='C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scripts\\Web Scraping\\Motivation Bot\\cred.env')
+
+email_user = os.getenv("EMAIL_USER")
+email_pass = os.getenv("EMAIL_PASS")
+
+
 # Start the browser
 driver = uc.Chrome(options=options)
 
@@ -36,7 +44,7 @@ try:
 
     # Simulate scrolling
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(random.uniform(6, 8))
+    time.sleep(random.uniform(1, 3))
 
     # Interact with the page like a human
     actions = ActionChains(driver)
@@ -57,31 +65,32 @@ try:
         author = authors[i].text.strip() if i < len(authors) else "Unknown"
         formatted_quotes.append(f"{quote} — {author}")
 
+    if len(formatted_quotes) < 2:
+        raise ValueError("Not enough quotes found on the page.")
+    
     random_quotes=random.sample(formatted_quotes,k=2)
     ans='\n\n'.join(random_quotes)
     print('===ans string generated===')
 
+
+       # === Compose and send email ===
+    msg = MIMEText(ans, _charset="utf-8")
+    msg["Subject"] = "Your Daily Motivation 💪"
+    msg["From"] = email_user
+    msg["To"] = "pctechtalks@gmail.com"
+
     smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
     smtpObj.ehlo()
     smtpObj.starttls()
-    print(smtpObj.login('rajaji.prashant@gmail.com', 'plfw vppx ahtc kwjq'))
+    smtpObj.login(email_user, email_pass)
 
     print('===Link with SMTP Server Established===')
 
-    from_addr = 'rajaji.prashant@gmail.com'
-    to_addr = 'pctechtalks@gmail.com'
-    subject = "Todays' Quote"
-    body = ans
-    
-    msg = MIMEText(ans, _charset="utf-8")
-    msg["Subject"] = subject
-    msg["From"] = from_addr
-    msg["To"] = to_addr
-
-    smtpObj.sendmail(from_addr, to_addr, msg.as_string())
+    smtpObj.sendmail(email_user, msg["To"], msg.as_string())
     smtpObj.quit()
 
-    print("Email sent!")
+    print("✅ Email sent successfully!")
+
     print('===RUN SUCCESSFUL===')
 
 
@@ -90,6 +99,7 @@ except Exception as e:
     print('===RUN FAILED====')
 
 finally:
-    driver.quit()
+    driver.quit()# You already close the browser here
+    del driver  # Tell Python: don't try to close it again
     
 
