@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import random
+from email.mime.text import MIMEText
+import smtplib 
 
 # Configure Chrome options
 options = uc.ChromeOptions()
@@ -47,14 +49,47 @@ try:
     quotes = driver.find_elements(By.CSS_SELECTOR, "a.b-qt")
     authors = driver.find_elements(By.CSS_SELECTOR, "a.bq-aut")
 
-    print("\n🔹 =================Top Motivational Quotes:=================\n")
-    for i in range(min(5, len(quotes))):  # Print top 5
+    file_path = 'C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scripts\\Web Scraping\\Motivation Bot\\quotes.txt'
+
+    formatted_quotes = []
+    for i in range(len(quotes)):
         quote = quotes[i].text.strip()
         author = authors[i].text.strip() if i < len(authors) else "Unknown"
-        print(f"\"{quote}\" — {author}")
+        formatted_quotes.append(f"{quote} — {author}")
+
+    random_quotes=random.sample(formatted_quotes,k=2)
+    ans='\n\n'.join(random_quotes)
+    print('===ans string generated===')
+
+    smtpObj = smtplib.SMTP('smtp.gmail.com', 587)
+    smtpObj.ehlo()
+    smtpObj.starttls()
+    print(smtpObj.login('rajaji.prashant@gmail.com', 'plfw vppx ahtc kwjq'))
+
+    print('===Link with SMTP Server Established===')
+
+    from_addr = 'rajaji.prashant@gmail.com'
+    to_addr = 'pctechtalks@gmail.com'
+    subject = "Todays' Quote"
+    body = ans
+    
+    msg = MIMEText(ans, _charset="utf-8")
+    msg["Subject"] = subject
+    msg["From"] = from_addr
+    msg["To"] = to_addr
+
+    smtpObj.sendmail(from_addr, to_addr, msg.as_string())
+    smtpObj.quit()
+
+    print("Email sent!")
+    print('===RUN SUCCESSFUL===')
+
 
 except Exception as e:
     print(f"⚠️ Error occurred: {e}")
+    print('===RUN FAILED====')
 
 finally:
     driver.quit()
+    
+
