@@ -6,13 +6,19 @@ const ChatWindow = ({ messages }) => {
       {messages && messages.map((msg, idx) => (
         <div
           key={idx}
-          className={`max-w-[70%] p-3 rounded-xl my-1 break-words ${
-            msg.sender === "user"
-              ? "bg-blue-600 text-white self-end"
-              : "bg-gray-600 text-gray-100 self-start"
+          className={`flex my-1 ${
+            msg.sender === "user" ? "justify-start" : "justify-end"
           }`}
         >
-          {msg.text}
+          <div
+            className={`max-w-[70%] p-3 rounded-xl break-words ${
+              msg.sender === "user"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-600 text-gray-100"
+            }`}
+          >
+            {msg.text}
+          </div>
         </div>
       ))}
     </div>
