@@ -36,6 +36,7 @@ def handle_query(query: Query):
     response = chat.send_message_stream(query.message)
 
     full_reply = ""
+    #technically we dont need a conversation log file as the chat obkect of gemini sdk handles chat history on its own..so we can remove the next block of code.
     with open(log_path, 'a', encoding='utf-8') as f:
         f.write("USER: " + query.message + '\n')
         f.write("BOT: ")

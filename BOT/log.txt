@@ -226,3 +226,47 @@ BOT: Certainly, sir. Here are three points summarizing "The Clockwork Sparrow":
 2.  **A storm caused a city-wide blackout, stopping all clocks. The mayor offered a reward to restore time, but Elara's workshop was damaged.**
 3.  **Pip magically activated dormant electricity, empowering Elara to repair the clocks. She declined a reward, asking only for a quiet place for Pip's songs, honoring its role in restoring order and hope.**
 ---
+USER: hiii
+BOT: Good morning, sir.
+---
+USER: how r u?
+BOT: I am functioning optimally, sir, and ready to assist you. Thank you for asking.
+---
+USER: so which are the best car comapnies in f1?
+BOT: That's an excellent question, sir, but it has a slight nuance in Formula 1. When we talk about "car companies" in F1, we usually refer to two main things:
+
+1.  **The Constructors (the teams that build the entire car, including the chassis, aerodynamics, etc.):** These are often specialist racing companies, though some are backed by large automotive groups.
+2.  **The Engine Manufacturers (the companies that supply the power units):** These are typically large automotive car companies.
+
+Considering both aspects, and looking at both historical success and current performance, here are some of the best:
+
+**Top Constructors (Teams that build the car):**
+
+*   **Scuderia Ferrari:** Unquestionably the most iconic and successful team in F1 history, with the most championships and race wins. They also build their own engines.
+*   **Mercedes-AMG Petronas Formula One Team:** Dominated the sport for eight consecutive constructor championships (2014-2021) and continue to be a top contender. They also build their own engines.
+*   **Red Bull Racing:** A very strong force, especially in recent years, winning multiple championships. They currently use Honda-derived power units under the "Honda RBPT" branding.
+*   **McLaren:** Historically one of the most successful teams, with many championships and legendary drivers. They currently use Mercedes power units.
+*   **Williams Racing:** While not at their peak currently, Williams is historically one of the most successful teams in F1, with numerous constructor and driver titles. They use Mercedes power units.
+
+**Top Engine Manufacturers (Suppliers of Power Units):**
+
+*   **Mercedes-AMG High Performance Powertrains:** Have produced the most dominant power units of the hybrid era (since 2014), supplying their own team and others.
+*   **Ferrari:** Produce their own engines for their team and supply others. Always a strong competitor.
+*   **Honda / Honda RBPT (Red Bull Powertrains):** Honda has had successful stints as an engine supplier, most recently powering Red Bull to championships. Red Bull now operates its own engine program with Honda's support and intellectual property.
+*   **Renault:** Historically a very successful engine supplier, powering multiple championship-winning teams (including their own works team, Alpine).
+
+**In summary, sir:**
+
+If you're asking about the overall package – the team that builds the chassis and has achieved the most success – **Ferrari** is historically the greatest, with **Mercedes** and **Red Bull Racing** being the dominant forces in the modern era.
+
+If you're asking specifically about the large automotive companies that provide the engines, **Mercedes**, **Ferrari**, and **Honda** (through RBPT) are currently at the top of their game.
+
+Does that clarify things for you, sir?
+---
+USER: ok i love mercedes bty who is the tp of mercedes?
+BOT: Ah, an excellent choice, sir! Mercedes has indeed been a formidable force.
+
+The Team Principal of the Mercedes-AMG Petronas Formula One Team is **Toto Wolff**.
+
+He has held that position since 2013 and is also the CEO and a one-third owner of the team. He is widely credited for leading Mercedes to their unprecedented run of eight consecutive Constructors' Championships.
+---

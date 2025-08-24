@@ -3,6 +3,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 const ChatWindow = ({ messages }) => {
+  
+  
   return (
     <div className="flex-1 p-4 overflow-y-auto h-96 bg-gray-700 rounded-t-lg">
       {messages &&
