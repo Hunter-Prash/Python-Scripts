@@ -2,10 +2,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import google.genai as genai
 from google.genai import types
+from dotenv import load_dotenv
 import uvicorn
+import os
 
+load_dotenv()
 
-client = genai.Client(api_key='AIzaSyDaLQFgly32RKBXWSURcmB8FOY0DS7_PY8')
+api_key=os.getenv('GEMINI_API_KEY')
+log_path=os.getenv('LOG_FILE_PATH')
+
+# Ensure API key is set before proceeding
+if not api_key:
+    raise ValueError("GEMINI_API_KEY not found in environment variables or .env file.")
+
+client = genai.Client(api_key=api_key)
 
 # Create a persistent chat session
 chat = client.chats.create(
@@ -13,9 +23,7 @@ chat = client.chats.create(
     config=types.GenerateContentConfig(system_instruction="You are to address me as sir.")
 )
 
-
-log_path = r'C:\Users\pctec\OneDrive\Desktop\BACKEND projects\Python Scripts\BOT\log.txt'
-
+log_path = log_path
 
 app = FastAPI()
 

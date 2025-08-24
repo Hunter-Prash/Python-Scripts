@@ -20,7 +20,7 @@ function App() {
     
     const temp=[...messages]
     temp.push({sender:'user',text:message})
-  
+    
 
     const response=await axios.post('http://localhost:5000/chat',{message})
     
@@ -32,7 +32,7 @@ function App() {
 <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
   <h1 className="text-3xl font-bold mb-4">AI Chatbot</h1>
   {/* wider container → max-w-2xl */}
-  <div className="w-full max-w-2xl bg-gray-800 shadow-xl rounded-lg flex flex-col">
+  <div className="w-full max-w-5xl bg-gray-800 shadow-xl rounded-lg flex flex-col">
     <ChatWindow messages={messages} />
     <MessageInput onSend={handleSend} />
   </div>
