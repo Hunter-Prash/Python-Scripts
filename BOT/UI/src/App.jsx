@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ChatWindow from './ChatWindow'
 import MessageInput from './MessageInput'
+import axios from 'axios'
 
 {/*
   
@@ -21,9 +22,9 @@ function App() {
     temp.push({sender:'user',text:message})
   
 
-    //recive res(axios.get with payload as mssg)
-    const response='hiii'
-    temp.push({sender:'BOT',text:response})
+    const response=await axios.post('http://localhost:5000/chat',{message})
+    
+    temp.push({sender:'BOT',text:response.data.reply})
     setMessages(temp)
   }
 
