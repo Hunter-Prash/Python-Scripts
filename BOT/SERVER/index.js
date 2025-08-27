@@ -24,6 +24,6 @@ app.post('/chat', async (req, res) => {
     }
 });
 
-app.listen(5000,(req,res)=>{
+app.listen(5000,"0.0.0.0",(req,res)=>{
     console.log(`Server successfully running on PORT 5000`)
 })
