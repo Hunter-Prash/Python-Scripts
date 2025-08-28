@@ -16,7 +16,7 @@ function App() {
 
     try {
 
-      const response = await axios.post("http://3.110.106.4:5000/chat", { message });
+      const response = await axios.post("http://13.201.122.76:5000/chat", { message });
 
       setMessages((prev) => {
         const newMessages = [...prev];
