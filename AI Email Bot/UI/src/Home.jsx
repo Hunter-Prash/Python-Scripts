@@ -20,7 +20,9 @@ function Home() {
         const response = await axios.get('http://localhost:5100/me', { withCredentials: true })
         if (response.data.loggedIn) {
           setLogin(true)
+          
           window.location.href = "/dashboard" // redirect if logged in
+          //console.log(response.data) this console will log in the home screen but we will already bre redirect from there..(lol)
         } 
       } catch (err) {
         console.error(err)

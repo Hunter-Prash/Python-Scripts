@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 import { google } from 'googleapis'
 import crypto from 'crypto'
 import session from 'express-session'
-import { promises as fs } from 'fs';
+import fsSync from 'fs';
 import cors from 'cors'
 
 dotenv.config()
@@ -45,38 +45,9 @@ const scopes = [
  *   incorporating this code into your real app.
  */
 let storedRefreshToken = null;
-let userCredential = null;
 const filepath = 'C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scripts\\AI Email Bot\\SERVER\\accessToken.txt';
 
-const writeToFile=async(filepath,content)=>{
-    console.log(`Attempting to write to file.`);
 
-    try{
-        const jsonContent=JSON.stringify(content,null,2)
-        await fs.writeFile(filepath,jsonContent,'utf-8')
-        console.log('Successfully wrote to the file!');
-    }
-    catch (err) {
-        console.error('Error writing to file:', err);
-    }
-}
-
-const loadRefreshToken=async()=>{
-    try{
-        const data=await fs.readFile(filepath,'utf-8')
-        const parsed=JSON.parse(data)
-        storedRefreshToken=parsed.refresh_token
-
-        if(storedRefreshToken){
-            oauth2Client.setCredentials({refresh_token:storedRefreshToken})
-        }
-    }
-    catch (err) {
-    console.log("No refresh token found:", err);
-  }
-}
-
-await loadRefreshToken()//calling this on server start-up
 
 
 //go to oauth consent screen
@@ -118,11 +89,9 @@ app.get('/auth/google/callback', async (req, res) => {
     });
     oauth2Client.setCredentials(tokens);
 
-    /** Save credential to the global variable in case access token was refreshed.
-  * ACTION ITEM: In a production app, you likely want to save the refresh token
-  *              in a secure persistent database instead. */
-    userCredential = tokens;
-    await writeToFile(filepath,userCredential)
+
+    // Save tokens immediately to file (synchronously)
+    fsSync.writeFileSync(filepath, JSON.stringify(tokens, null, 2), 'utf-8');
 
       // tokens.access_token can now be used to call Gmail API
   console.log(tokens);
@@ -142,34 +111,52 @@ app.get('/auth/google/callback', async (req, res) => {
  res.redirect("http://localhost:5173/dashboard");
 })
 
+//So every time the access token refreshes (about once an hour), Google will emit tokens, and this listener will persist the latest full token object into your file.
+
+// when ever the server restarts..this listner runs automatically..
+oauth2Client.on('tokens', (tokens) => {
+  let exisitingTokens=JSON.parse(fsSync.readFileSync(filepath,'utf-8')) 
+
+  // This only comes the first time (or if user re-consents/re-logins)
+  if (tokens.refresh_token) {
+    exisitingTokens={...exisitingTokens,
+        refresh_token:tokens.refresh_token
+    }
+  }
+
+  //this comes after the access token expires after every 1h
+  if (tokens.access_token) {
+    exisitingTokens={...exisitingTokens,
+        access_token:tokens.access_token
+    }
+  }
+  // Write back to file
+  fsSync.writeFileSync(filepath, JSON.stringify(exisitingTokens, null, 2));
+  console.log("Tokens updated:")
+});
 
 
 app.get('/me', async (req, res) => {
-    // If no refresh token is stored, the user is not logged in
-    if (!storedRefreshToken) 
-        {
-            return res.json({ loggedIn: false });
-        }
-    
-    // Optionally refresh access token if it doesn't exist or expired
-    if (!oauth2Client.credentials.access_token) { 
-        // Calls Google's OAuth2 endpoint using stored refresh token
-        // to obtain a new access token
-        const { credentials } = await oauth2Client.refreshAccessToken();
-        
-        // Update the oauth2Client with the new access token (and other tokens)
-        oauth2Client.setCredentials(credentials);
-    }
+  const savedTokens=JSON.parse(fsSync.readFileSync(filepath,'utf-8'))
+  if(!savedTokens.refresh_token){
+    return res.json({loggedIn:false})
+  }
+  storedRefreshToken=savedTokens.refresh_token
+  //AS LONG AS REFRESH TOKEN IS NOT EXPIRED....
+  oauth2Client.setCredentials({ refresh_token: storedRefreshToken });
 
-    // Create an OAuth2 service object to fetch user info
+  //When you call any Google API (like oauth2.userinfo.get()), the library will automatically refresh the access token if it’s expired — as long as you already called oauth2Client.setCredentials({ refresh_token }) earlier.
+  try {
     const oauth2 = google.oauth2({ auth: oauth2Client, version: "v2" });
-
-    // Get the logged-in user's profile information
     const userInfo = await oauth2.userinfo.get();
 
-    // Respond to frontend with logged-in status and user info
     res.json({ loggedIn: true, user: userInfo.data });
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+    res.json({ loggedIn: false });
+  }
 });
+
 
 
 app.listen(5100, (req, res) => {
