@@ -5,16 +5,19 @@ import crypto from 'crypto'
 import session from 'express-session'
 import fsSync from 'fs';
 import cors from 'cors'
+import gmailRouter from "./routes/gmailRoute.js";
+
 
 dotenv.config()
 
+
 const app = express()
 app.use(cors({
-  origin: 'http://localhost:5173', // replace with your frontend URL
-  credentials: true               // allow cookies/session to be sent
+  origin: 'http://localhost:5173', 
+  credentials: true           
 }))
 
-
+//BASE ROUTE
 app.get('/', (req, res) => {
     res.send('Hii from backend!@')
 })
@@ -25,7 +28,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-const oauth2Client = new google.auth.OAuth2(
+export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URI
@@ -132,7 +135,7 @@ oauth2Client.on('tokens', (tokens) => {
   }
   // Write back to file
   fsSync.writeFileSync(filepath, JSON.stringify(exisitingTokens, null, 2));
-  console.log("Tokens updated:")
+  console.log("Tokens updated.")
 });
 
 
@@ -157,7 +160,8 @@ app.get('/me', async (req, res) => {
   }
 });
 
-
+//GMAIL ROUTER
+app.use("/api", gmailRouter);
 
 app.listen(5100, (req, res) => {
     console.log('Server successfully started on port 5100')
