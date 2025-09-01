@@ -19,11 +19,13 @@ const Message = () => {
         .filter((mail) => mail.threadId === threads)
         .sort((a, b) => (a.id === id ? -1 : 1));
 
+      console.log(filtered)
       setThreadMails(filtered);
+
     };
 
     loadThreadMails();
-    
+
   }, []);
 
   return (
@@ -58,14 +60,33 @@ const Message = () => {
               <h3 className="font-semibold text-blue-800 mb-2">{mail.subject}</h3>
 
               {/* Email content */}
+
+              {/*Backend returns HTML string (mail.html).
+              DOMpurify converts your HTML string into a temporary DOM tree in memory
+              Walks through all elements and attributes.
+              Removes anything unsafe (scripts, event handlers, dangerous URLs, etc.).
+              Keeps the “safe” elements like <div>, <p>, <table>, <img> — especially those you allow with ALLOWED_ATTR or ADD_TAGS.
+              Returns the cleaned HTML string.
+              
+              Also,Normally in React, you cannot just put a string of HTML inside JSX:
+              <div>{mail.html}</div> .... this will render raw text, not HTML
+
+              SO we need dangerouslySetInnerHTML to preserve the html structure while rendering
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mail.html) }} />
+
+              */}
               <div
-                className="text-gray-900 break-words whitespace-pre-wrap overflow-x-auto email-content"
+                className="email-content"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(mail.html || mail.snippet, {
-                    FORBID_ATTR: ["style"], // remove inline styles to enforce your theme
+                    ADD_TAGS: ['table', 'tr', 'td', 'tbody', 'thead'], // keep table layouts
+                    KEEP_CONTENT: true, // don't remove important content
+                    // optionally allow style if you trust it
+                    ALLOWED_ATTR: ['src', 'href', 'width', 'height', 'colspan', 'rowspan', 'align', 'style'],
                   }),
                 }}
               />
+
             </motion.div>
           ))
         ) : (

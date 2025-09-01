@@ -36,7 +36,7 @@ const App = () => {
 
   const handleClick = (item) => {
     navigate(`/message/${item.id}`, {
-      state: { threads:item.threadId,id:item.id,},
+      state: { threads: item.threadId, id: item.id, },
     });
   };
 
@@ -139,19 +139,56 @@ const App = () => {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-xl font-semibold mb-4 text-gray-200">Gmail Labels</h3>
-            <ul className="space-y-2 overflow-y-auto pr-2 flex-grow">
-              {labels.map((label) => (
-                <motion.li
-                  key={label.id}
-                  className="bg-gray-800/80 px-4 py-2 rounded-lg hover:bg-blue-800/70 cursor-pointer transition-colors duration-200 border border-transparent hover:border-blue-600"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {label.name}
-                </motion.li>
-              ))}
-            </ul>
+
+            {/* System Labels */}
+            <div className="mb-6">
+              <h4 className="text-lg font-medium text-blue-400 mb-2">System Labels</h4>
+              <ul className="space-y-2 pr-2 flex-grow overflow-hidden">
+                {labels
+                  .filter((label) =>
+                    ["INBOX", "STARRED", "SENT", "DRAFT", "SPAM", "TRASH"].includes(
+                      label.name.toUpperCase()
+                    )
+                  )
+                  .map((label) => (
+                    <motion.li
+                      key={label.id}
+                      className="bg-gray-800/80 px-4 py-2 rounded-lg hover:bg-blue-800/70 cursor-pointer transition-colors duration-200 border border-transparent hover:border-blue-600"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {label.name}
+                    </motion.li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Other Labels */}
+            <div>
+              <h4 className="text-lg font-medium text-purple-400 mb-2">Other</h4>
+              <ul className="space-y-2 pr-2 flex-grow overflow-hidden">
+                {labels
+                  .filter(
+                    (label) =>
+                      !["INBOX", "STARRED", "SENT", "DRAFT", "SPAM", "TRASH"].includes(
+                        label.name.toUpperCase()
+                      )
+                  )
+                  .map((label) => (
+                    <motion.li
+                      key={label.id}
+                      className="bg-gray-800/80 px-4 py-2 rounded-lg hover:bg-blue-800/70 cursor-pointer transition-colors duration-200 border border-transparent hover:border-blue-600"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {label.name}
+                    </motion.li>
+                  ))}
+              </ul>
+            </div>
+
           </motion.div>
+
 
           {/* Mail list */}
           <div className="flex-1 p-8 overflow-y-auto">
