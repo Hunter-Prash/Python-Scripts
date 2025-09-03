@@ -6,7 +6,7 @@ import session from 'express-session'
 import fsSync from 'fs';
 import cors from 'cors'
 import gmailRouter from "./routes/gmailRoute.js";
-
+import pythonRouter from "./routes/pythonRouter.js";
 
 dotenv.config()
 
@@ -16,7 +16,7 @@ app.use(cors({
   origin: 'http://localhost:5173', 
   credentials: true           
 }))
-
+app.use(express.json());
 //BASE ROUTE
 app.get('/', (req, res) => {
     res.send('Hii from backend!@')
@@ -162,6 +162,9 @@ app.get('/me', async (req, res) => {
 
 //GMAIL ROUTER
 app.use("/api", gmailRouter);
+
+//FORWARD PROMPT TO PYTHON FASTAPI SERVER
+app.use('/api',pythonRouter)
 
 app.listen(5100, (req, res) => {
     console.log('Server successfully started on port 5100')

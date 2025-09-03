@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
+import axios from "axios";
 
 const Message = () => {
   const location = useLocation();
@@ -28,6 +29,30 @@ const Message = () => {
 
   }, []);
 
+
+  const handleSummarization = async () => {
+    let temp = [...threadMails]
+    let textBlob = ""
+    //make a text blob for each of the plaintext attr in each mail in the thread
+    temp.forEach((i => {
+
+      textBlob += `\n----- EMAIL START -----\nFrom: ${i.from}\nDate: ${i.date}\nSubject: ${i.subject}\nBody:\n${i.fullCleanText}\n----- EMAIL END -----\n`
+
+    }))
+
+
+    try {
+      let response = await axios.post('http://localhost:5100/api/summarize', {
+        payload: textBlob
+      });
+
+      console.log("Summary:", response.data.reply);
+    } catch (err) {
+      console.error("Error summarizing:", err.message);
+    }
+
+  }
+
   return (
     <div className="relative min-h-screen bg-white text-gray-900 font-sans p-8 flex flex-col items-center">
       {/* Back button */}
@@ -37,6 +62,19 @@ const Message = () => {
       >
         ← Back
       </button>
+
+      {/*Generate summary button*/}
+      <button
+        onClick={handleSummarization}
+        className="absolute top-8 right-32 z-20 px-5 py-2 rounded-xl 
+             bg-blue-600 text-white font-medium shadow-md 
+             hover:bg-blue-700 hover:shadow-lg 
+             active:bg-blue-800 active:scale-95 
+             transition-all duration-200"
+      >
+        ✨ Generate Summary
+      </button>
+
 
       {/* Thread container */}
       <div className="w-full max-w-3xl flex flex-col gap-4 pt-16">
@@ -78,7 +116,7 @@ const Message = () => {
               <div
                 className="email-content"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(mail.html || mail.snippet, {
+                  __html: DOMPurify.sanitize(mail.html || mail.fullCleanText, {
                     ADD_TAGS: ['table', 'tr', 'td', 'tbody', 'thead'], // keep table layouts
                     KEEP_CONTENT: true, // don't remove important content
                     // optionally allow style if you trust it

@@ -130,8 +130,8 @@ router.get("/gmail/mails", async (req, res) => {
       const from = headers.find((h) => h.name === "From")?.value || "(Unknown Sender)";
       const date = headers.find((h) => h.name === "Date")?.value || "";
 
-      const snippet = getCleanText(msgRes.data.payload);
-      const html = getHtmlContent(msgRes.data.payload);
+      const fullCleanText = getCleanText(msgRes.data.payload);//gets the plain text
+      const html = getHtmlContent(msgRes.data.payload);//gets the html content
 
       // Determine category
       const labelIds = msgRes.data.labelIds || [];
@@ -155,8 +155,8 @@ router.get("/gmail/mails", async (req, res) => {
         subject,
         from,
         date,
-        snippet,
-        html,
+        fullCleanText,//string of plain text from the mail
+        html,//string of html content from the mail
         category,
       });
     }
