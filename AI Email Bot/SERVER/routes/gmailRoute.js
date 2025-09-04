@@ -48,7 +48,7 @@ router.get("/gmail/mails", async (req, res) => {
     // Get list of messages (limit 10)
     const messagesResponse = await gmail.users.messages.list({
       userId: "me",
-      maxResults: 10,
+      maxResults: 20,
       labelIds: ["INBOX"],
     });
 
