@@ -84,6 +84,7 @@ console.log("Redirect URL:", process.env.GOOGLE_REDIRECT_URI);
 
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
+    prompt:'consent',
     scope: scopes,
     include_granted_scopes: true,
     state,
