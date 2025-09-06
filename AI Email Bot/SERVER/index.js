@@ -51,6 +51,26 @@ let storedRefreshToken = null;
 const filepath = 'C:\\Users\\pctec\\OneDrive\\Desktop\\BACKEND projects\\Python Scripts\\AI Email Bot\\SERVER\\accessToken.txt';
 
 
+// Utility function to safely read token file
+function readTokensFile(filepath) {
+  try {
+    if (!fsSync.existsSync(filepath)) {
+      console.log("Token file does not exist. Returning empty object.");
+      return {}; // return empty object if file doesn't exist
+    }
+
+    const fileContent = fsSync.readFileSync(filepath, 'utf-8').trim();
+    if (!fileContent) {
+      console.log("Token file is empty. Returning empty object.");
+      return {}; // return empty object if file is empty
+    }
+
+    return JSON.parse(fileContent); // valid JSON
+  } catch (err) {
+    console.error("Error reading token file:", err.message);
+    return {}; // return empty object if corrupted or unreadable
+  }
+}
 
 
 //go to oauth consent screen
@@ -118,47 +138,61 @@ app.get('/auth/google/callback', async (req, res) => {
 
 // when ever the server restarts..this listner runs automatically..
 oauth2Client.on('tokens', (tokens) => {
-  let exisitingTokens=JSON.parse(fsSync.readFileSync(filepath,'utf-8')) 
+  let existingTokens = {};
 
-  // This only comes the first time (or if user re-consents/re-logins)
+  try {
+    const fileContent = fsSync.readFileSync(filepath, 'utf-8').trim();
+    if (fileContent) {
+      existingTokens = JSON.parse(fileContent);
+    } else {
+      console.log("Token file is empty. Starting fresh.");
+    }
+  } catch (err) {
+    console.log("Token file corrupted or unreadable. Resetting...", err.message);
+    existingTokens = {};
+  }
+
+  // Merge new tokens into existing tokens
   if (tokens.refresh_token) {
-    exisitingTokens={...exisitingTokens,
-        refresh_token:tokens.refresh_token
-    }
+    existingTokens.refresh_token = tokens.refresh_token;
+  }
+  if (tokens.access_token) {
+    existingTokens.access_token = tokens.access_token;
   }
 
-  //this comes after the access token expires after every 1h
-  if (tokens.access_token) {
-    exisitingTokens={...exisitingTokens,
-        access_token:tokens.access_token
-    }
-  }
-  // Write back to file
-  fsSync.writeFileSync(filepath, JSON.stringify(exisitingTokens, null, 2));
-  console.log("Tokens updated.")
+  // Write updated tokens back to file
+  fsSync.writeFileSync(filepath, JSON.stringify(existingTokens, null, 2), 'utf-8');
+  console.log("Tokens updated successfully.");
 });
 
 
 app.get('/me', async (req, res) => {
-  const savedTokens=JSON.parse(fsSync.readFileSync(filepath,'utf-8'))
-  if(!savedTokens.refresh_token){
-    return res.json({loggedIn:false})
-  }
-  storedRefreshToken=savedTokens.refresh_token
-  //AS LONG AS REFRESH TOKEN IS NOT EXPIRED....
-  oauth2Client.setCredentials({ refresh_token: storedRefreshToken });
-
-  //When you call any Google API (like oauth2.userinfo.get()), the library will automatically refresh the access token if it’s expired — as long as you already called oauth2Client.setCredentials({ refresh_token }) earlier.
   try {
+    const savedTokens = readTokensFile(filepath);
+
+    if (!savedTokens.refresh_token) {
+      return res.json({ loggedIn: false });
+    }
+
+    storedRefreshToken = savedTokens.refresh_token;
+    oauth2Client.setCredentials({ refresh_token: storedRefreshToken });
+
     const oauth2 = google.oauth2({ auth: oauth2Client, version: "v2" });
     const userInfo = await oauth2.userinfo.get();
 
-    res.json({ loggedIn: true, user: userInfo.data });
+    return res.json({ loggedIn: true, user: userInfo.data });
   } catch (err) {
     console.error("Error fetching user info:", err);
-    res.json({ loggedIn: false });
+
+    if (err.response?.data?.error === "invalid_grant") {
+      console.log("Refresh token expired or revoked. Clearing tokens...");
+      fsSync.writeFileSync(filepath, JSON.stringify({}), 'utf-8');
+    }
+
+    return res.json({ loggedIn: false });
   }
 });
+
 
 //GMAIL ROUTER
 app.use("/api", gmailRouter);
