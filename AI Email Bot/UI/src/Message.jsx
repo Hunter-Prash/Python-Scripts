@@ -25,6 +25,7 @@ const Message = () => {
         .filter((mail) => mail.threadId === threads)
         .sort((a, b) => (a.id === id ? -1 : 1));
 
+      console.log(filtered)
       setThreadMails(filtered);
     };
 
