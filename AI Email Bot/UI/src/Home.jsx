@@ -37,7 +37,7 @@ function Home() {
   }
 
   const handleClick = () => {
-    window.location.href = "http://localhost:5100/auth/google"
+    window.location.href = "http://3.110.77.65:5100/auth/google"
   }
 
   return (
