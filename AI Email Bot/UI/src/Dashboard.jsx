@@ -53,9 +53,9 @@ const handleLabels = (category) => {
     const fetchData = async () => {
       try {
         const [userRes, labelRes, mailsRes] = await Promise.all([
-          axios.get("http://localhost:5100/me", { withCredentials: true }),
-          axios.get("http://localhost:5100/api/gmail/labels", { withCredentials: true }),
-          axios.get("http://localhost:5100/api/gmail/mails", { withCredentials: true }),
+          axios.get("http://3.110.77.65:5100/me", { withCredentials: true }),//add ec2 public ip instead of local host while accessing from the cloud .. everyitme you restart the instance the public ip will also change
+          axios.get("http://3.110.77.65:5100/api/gmail/labels", { withCredentials: true }),
+          axios.get("http://3.110.77.65:5100/api/gmail/mails", { withCredentials: true }),
         ]);
 
         if (userRes.data.loggedIn) {

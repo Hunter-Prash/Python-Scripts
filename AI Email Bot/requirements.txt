@@ -1,0 +1,7 @@
+#python dependencies
+fastapi
+uvicorn
+python-dotenv
+google-genai
+pydantic
+
