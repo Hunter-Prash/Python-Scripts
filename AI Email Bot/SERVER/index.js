@@ -201,6 +201,6 @@ app.use("/api", gmailRouter);
 //FORWARD PROMPT TO PYTHON FASTAPI SERVER
 app.use('/api',pythonRouter)
 
-app.listen(5100, (req, res) => {
+app.listen(5100,'0.0.0.0', (req, res) => {
     console.log('Server successfully started on port 5100')
 })
